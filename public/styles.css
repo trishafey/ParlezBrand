@@ -1,0 +1,226 @@
+:root {
+  --pink: #ff5d8f;
+  --pink-deep: #e23e6e;
+  --cream: #fff6f8;
+  --ink: #3a2030;
+  --yellow: #ffcf4d;
+  --shadow: 0 18px 40px rgba(226, 62, 110, 0.25);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  color: var(--ink);
+  background: linear-gradient(135deg, #ffe2ec 0%, #ffd6e8 40%, #ffe9d6 100%);
+  overflow: hidden;
+}
+
+/* Confetti canvas overlays the whole screen */
+#confetti {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 100;
+}
+
+.stage {
+  position: relative;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+/* Screens stack; only the active one shows */
+.screen {
+  position: absolute;
+  inset: 0;
+  display: none;
+  place-items: center;
+  padding: 24px;
+}
+.screen.is-active {
+  display: grid;
+  animation: pop-in 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28) both;
+}
+
+.card {
+  position: relative;
+  width: min(520px, 92vw);
+  background: var(--cream);
+  border-radius: 28px;
+  padding: 44px 36px;
+  box-shadow: var(--shadow);
+  text-align: center;
+  overflow: hidden;
+}
+
+.question {
+  font-size: clamp(1.6rem, 5vw, 2.4rem);
+  line-height: 1.2;
+  margin: 0 0 32px;
+}
+
+.yay {
+  font-size: clamp(1.7rem, 5.5vw, 2.6rem);
+  margin: 0 0 24px;
+  color: var(--pink-deep);
+}
+
+.details-title {
+  font-size: clamp(1.4rem, 4.5vw, 2rem);
+  margin: 0 0 28px;
+}
+
+.buttons {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn {
+  font: inherit;
+  font-weight: 700;
+  font-size: 1.1rem;
+  border: none;
+  border-radius: 999px;
+  padding: 14px 34px;
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.2s ease, background 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn:active { transform: scale(0.96); }
+
+.btn-yes {
+  background: var(--pink);
+  color: #fff;
+  box-shadow: 0 10px 24px rgba(255, 93, 143, 0.45);
+}
+.btn-yes:hover { background: var(--pink-deep); }
+
+.btn-block {
+  width: 100%;
+  margin-top: 8px;
+}
+
+.btn-no {
+  background: #fff;
+  color: var(--ink);
+  border: 2px solid #f0c6d4;
+}
+
+/* When the No button starts running away it becomes free-floating */
+.btn-no.evading {
+  position: fixed;
+  z-index: 50;
+  margin: 0;
+  transition: left 0.18s ease, top 0.18s ease, transform 0.18s ease;
+}
+
+.taunt {
+  min-height: 1.4em;
+  margin: 20px 0 0;
+  font-style: italic;
+  color: var(--pink-deep);
+  font-weight: 600;
+}
+
+/* ---------- form ---------- */
+form { text-align: left; }
+
+.field {
+  display: block;
+  margin-bottom: 22px;
+}
+.field-label {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.field-label em { color: var(--pink-deep); font-style: normal; }
+.optional { font-weight: 400; color: #9a7d8a; font-size: 0.9em; }
+
+input[type="datetime-local"],
+input[type="text"] {
+  width: 100%;
+  font: inherit;
+  padding: 13px 16px;
+  border: 2px solid #f0c6d4;
+  border-radius: 14px;
+  background: #fff;
+  color: var(--ink);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+input:focus {
+  outline: none;
+  border-color: var(--pink);
+  box-shadow: 0 0 0 4px rgba(255, 93, 143, 0.18);
+}
+input.invalid { border-color: #e23e6e; }
+
+.field-error {
+  display: block;
+  min-height: 1.1em;
+  margin-top: 6px;
+  color: var(--pink-deep);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.form-status {
+  min-height: 1.2em;
+  margin: 16px 0 0;
+  text-align: center;
+  font-weight: 600;
+}
+.form-status.error { color: var(--pink-deep); }
+
+.btn[disabled] { opacity: 0.65; cursor: progress; }
+
+.big-heart {
+  font-size: 5rem;
+  animation: beat 0.9s ease-in-out infinite;
+}
+.done-sub {
+  margin: 8px 0 0;
+  color: #7a5666;
+  font-weight: 600;
+}
+
+/* floating background hearts on the question card */
+.floating-hearts span {
+  position: absolute;
+  bottom: -20px;
+  font-size: 1.2rem;
+  opacity: 0.5;
+  animation: rise linear infinite;
+  pointer-events: none;
+}
+
+@keyframes pop-in {
+  from { opacity: 0; transform: scale(0.9) translateY(12px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+@keyframes beat {
+  0%, 100% { transform: scale(1); }
+  25% { transform: scale(1.18); }
+  40% { transform: scale(1); }
+}
+@keyframes rise {
+  to { transform: translateY(-360px) rotate(40deg); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .screen.is-active { animation: none; }
+  .big-heart { animation: none; }
+  .floating-hearts span { display: none; }
+}

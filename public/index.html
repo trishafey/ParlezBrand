@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="A little question for you 💕" />
+  <title>A question for you 💕</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💖</text></svg>" />
+</head>
+<body>
+  <!-- Confetti lives on top of everything -->
+  <canvas id="confetti" aria-hidden="true"></canvas>
+
+  <main class="stage">
+    <!-- ============ SCREEN 1: THE QUESTION ============ -->
+    <section id="screen-question" class="screen is-active">
+      <div class="card">
+        <div class="floating-hearts" aria-hidden="true"></div>
+        <h1 class="question">Do you want to go on a date with me?</h1>
+        <div class="buttons">
+          <button id="btn-yes" class="btn btn-yes" type="button">Yes 💛</button>
+          <button id="btn-no" class="btn btn-no" type="button">No</button>
+        </div>
+        <p id="taunt" class="taunt" aria-live="polite"></p>
+      </div>
+    </section>
+
+    <!-- ============ SCREEN 2: THE YAY ============ -->
+    <section id="screen-yay" class="screen">
+      <div class="card">
+        <h1 class="yay">YAY! I knew you'd say yes 🥰</h1>
+        <button id="btn-continue" class="btn btn-yes" type="button">Let's plan it →</button>
+      </div>
+    </section>
+
+    <!-- ============ SCREEN 3: THE DETAILS ============ -->
+    <section id="screen-details" class="screen">
+      <div class="card">
+        <h2 class="details-title">So... when &amp; where? 💌</h2>
+        <form id="date-form" novalidate>
+          <label class="field">
+            <span class="field-label">Pick a date &amp; time <em>*</em></span>
+            <input id="datetime" name="datetime" type="datetime-local" required />
+            <span class="field-error" id="datetime-error"></span>
+          </label>
+
+          <label class="field">
+            <span class="field-label">Where to? <span class="optional">(optional)</span></span>
+            <input id="location" name="location" type="text" placeholder="A cozy little spot, the beach, anywhere with you…" autocomplete="off" />
+          </label>
+
+          <button id="btn-submit" class="btn btn-yes btn-block" type="submit">Send it 💕</button>
+          <p id="form-status" class="form-status" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+
+    <!-- ============ SCREEN 4: THE FINALE ============ -->
+    <section id="screen-done" class="screen">
+      <div class="card">
+        <div class="big-heart" aria-hidden="true">💖</div>
+        <h1 class="yay">Can't wait!</h1>
+        <p class="done-sub" id="done-sub"></p>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

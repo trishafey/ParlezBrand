@@ -20,7 +20,7 @@
      Leave it as "" to just use the email button — works with zero setup.
      ============================================================ */
   var TO_EMAIL = "Trisha@trishafeydesigns.com";
-  var FORMSPREE_ENDPOINT = "";
+  var FORMSPREE_ENDPOINT = "https://formspree.io/f/xbdbwwgj";
 
   /* ---------- screen switching ---------- */
   function show(id) {

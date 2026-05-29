@@ -1,6 +1,8 @@
 # 💕 Will you go on a date with me?
 
-A playful little one-page website that asks the big question.
+A playful little one-page website that asks the big question. Pure static
+HTML/CSS/JS — no build step, no server. Just open `index.html`, or host it
+free on **GitHub Pages** and send your friend the link.
 
 ## What it does
 
@@ -8,48 +10,47 @@ A playful little one-page website that asks the big question.
 2. **The runaway No** — every time you try to click **No**, it dodges away. After **10 attempts** it sprints clean off the screen, leaving only one option. 😏
 3. **Yes!** — clicking **Yes** sets off a burst of **heart confetti** and the message **"YAY! I knew you'd say yes 🥰"**.
 4. **Plan it** — a page with a **date & time picker (required)** and a **location picker (optional)**.
-5. **Send it** — submitting **emails the details to Trisha@trishafeydesigns.com**, then shows a celebration animation and **"Can't wait!"**.
+5. **Send it** — the finale shows a celebration animation, **"Can't wait!"**, and an **"✉️ Email the details to Trisha"** button.
 
-The frontend is plain HTML/CSS/JS with a tiny self-contained confetti engine — no external libraries or CDNs needed.
+The confetti is a tiny self-contained canvas engine — no external libraries or CDNs.
 
-## Run it locally
+## Try it locally
 
-```bash
-npm install
-npm start
-```
+Just open `index.html` in your browser. That's it.
 
-Then open <http://localhost:3000>.
+## Put it online (so you can send the link)
 
-Without email configured, the site fully works and the submission is **logged to your terminal** instead of emailed — handy for testing.
+The easiest free option is **GitHub Pages**:
 
-## Make the email actually send
+1. Push these files to the repo (they live at the root on purpose).
+2. On GitHub: **Settings → Pages → Build and deployment → Deploy from a branch**,
+   pick your branch and the `/ (root)` folder, then **Save**.
+3. After a minute your site is live at
+   `https://<your-username>.github.io/<repo>/` — send that link to your friend. 💌
 
-The form posts to a small Express + [nodemailer](https://nodemailer.com) backend.
+## The email
 
-1. Copy the example config:
-   ```bash
-   cp .env.example .env
+Out of the box, the **"✉️ Email the details to Trisha"** button on the final
+screen opens a pre-filled email to **Trisha@trishafeydesigns.com** with the
+chosen date/time and location — works everywhere, zero setup.
+
+Want it to send **automatically** (no email app opening)? Set up a free form
+service and paste one line:
+
+1. Create a free form at <https://formspree.io> pointed at Trisha's address.
+2. Open `script.js` and set:
+   ```js
+   var FORMSPREE_ENDPOINT = "https://formspree.io/f/your-id-here";
    ```
-2. Fill in your SMTP details in `.env`.
-   - **Gmail:** turn on 2-Step Verification, then create an **App Password**
-     (Google Account → Security → App passwords) and use that as `SMTP_PASS`.
-3. `npm start` again. Submissions now email **Trisha@trishafeydesigns.com**
-   (change `TO_EMAIL` in `.env` to send elsewhere).
+3. Submitting now emails the details automatically. (The email button still
+   appears as a backup.)
 
-## Deploy
-
-It's a standard Node app — `npm start` serves both the site and the API on one
-port. It runs anywhere that hosts Node (Render, Railway, Fly.io, a VPS, etc.).
-Just set the same environment variables from `.env` in your host's dashboard.
+To send to a different address, change `TO_EMAIL` near the top of `script.js`.
 
 ## Project layout
 
 ```
-public/
-  index.html   the four screens (question → yay → details → done)
-  styles.css   styling + animations
-  script.js    runaway button, confetti, form submit
-server.js      static hosting + POST /api/date email endpoint
-.env.example   email configuration template
+index.html   the four screens (question → yay → details → done)
+styles.css   styling + animations
+script.js    runaway button, confetti, form + email
 ```

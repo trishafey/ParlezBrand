@@ -8,6 +8,20 @@
 (function () {
   "use strict";
 
+  /* ============================================================
+     CONFIG — where the date details go.
+     ------------------------------------------------------------
+     TO_EMAIL: the address the "Email the details" button sends to.
+
+     FORMSPREE_ENDPOINT (optional): if you want the details emailed
+     AUTOMATICALLY on submit (no email app opening), create a free
+     form at https://formspree.io pointed at TO_EMAIL and paste its
+     endpoint here, e.g. "https://formspree.io/f/abcdwxyz".
+     Leave it as "" to just use the email button — works with zero setup.
+     ============================================================ */
+  var TO_EMAIL = "Trisha@trishafeydesigns.com";
+  var FORMSPREE_ENDPOINT = "";
+
   /* ---------- screen switching ---------- */
   function show(id) {
     document.querySelectorAll(".screen").forEach(function (s) {
@@ -246,39 +260,71 @@
     dtInput.classList.remove("invalid");
 
     var payload = {
-      datetime: dtInput.value,
       datetimePretty: prettyDate(dtInput.value),
       location: locInput.value.trim()
     };
 
-    submitBtn.disabled = true;
-    status.textContent = "Sending… 💌";
-
-    fetch("/api/date", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    })
-      .then(function (res) {
-        return res.json().catch(function () { return {}; }).then(function (body) {
-          return { ok: res.ok, body: body };
+    // If Formspree is configured, email the details automatically.
+    // Otherwise just celebrate — the "Email the details" button on the
+    // finale screen is always there as the guaranteed way to send.
+    if (FORMSPREE_ENDPOINT) {
+      submitBtn.disabled = true;
+      status.textContent = "Sending… 💌";
+      fetch(FORMSPREE_ENDPOINT, {
+        method: "POST",
+        headers: { "Accept": "application/json", "Content-Type": "application/json" },
+        body: JSON.stringify({
+          message: buildMessage(payload),
+          when: payload.datetimePretty,
+          where: payload.location || "(surprise me!)"
+        })
+      })
+        .then(function (res) {
+          if (!res.ok) throw new Error("Hmm, couldn't send automatically");
+          finish(payload, true);
+        })
+        .catch(function () {
+          // Fall back to the celebration + manual email button.
+          finish(payload, false);
         });
-      })
-      .then(function (r) {
-        if (!r.ok) throw new Error((r.body && r.body.error) || "Something went wrong");
-        finish(payload);
-      })
-      .catch(function (err) {
-        submitBtn.disabled = false;
-        status.classList.add("error");
-        status.textContent = err.message + " — try again? 🙏";
-      });
+    } else {
+      finish(payload, false);
+    }
   });
 
-  function finish(payload) {
+  function buildMessage(payload) {
+    var lines = [
+      "She said YES! 🥰",
+      "",
+      "When:  " + payload.datetimePretty,
+      "Where: " + (payload.location || "(no location — surprise me!)"),
+      "",
+      "Can't wait! 💕"
+    ];
+    return lines.join("\n");
+  }
+
+  function buildMailto(payload) {
+    var subject = "It's a date! " + payload.datetimePretty;
+    return "mailto:" + TO_EMAIL +
+      "?subject=" + encodeURIComponent(subject) +
+      "&body=" + encodeURIComponent(buildMessage(payload));
+  }
+
+  function finish(payload, autoSent) {
     var sub = "I'll see you on " + payload.datetimePretty;
     sub += payload.location ? " at " + payload.location + " 💖" : " 💖";
     document.getElementById("done-sub").textContent = sub;
+
+    var emailBtn = document.getElementById("btn-email");
+    emailBtn.href = buildMailto(payload);
+    if (autoSent) {
+      // Already emailed via Formspree; offer the button as an optional extra.
+      emailBtn.textContent = "✉️ Send it again from your email";
+    } else {
+      emailBtn.textContent = "✉️ Email the details to Trisha";
+    }
+
     show("screen-done");
     celebrate(2600);
   }

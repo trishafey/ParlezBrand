@@ -226,6 +226,7 @@
   var dtInput = document.getElementById("datetime");
   var dtError = document.getElementById("datetime-error");
   var locInput = document.getElementById("location");
+  var noteInput = document.getElementById("note");
   var submitBtn = document.getElementById("btn-submit");
   var status = document.getElementById("form-status");
 
@@ -261,7 +262,8 @@
 
     var payload = {
       datetimePretty: prettyDate(dtInput.value),
-      location: locInput.value.trim()
+      location: locInput.value.trim(),
+      note: noteInput.value.trim()
     };
 
     // If Formspree is configured, email the details automatically.
@@ -276,7 +278,8 @@
         body: JSON.stringify({
           message: buildMessage(payload),
           when: payload.datetimePretty,
-          where: payload.location || "(surprise me!)"
+          where: payload.location || "(surprise me!)",
+          note: payload.note || "(no note)"
         })
       })
         .then(function (res) {
@@ -294,13 +297,15 @@
 
   function buildMessage(payload) {
     var lines = [
-      "She said YES! 🥰",
+      "They said YES! 🥰",
       "",
       "When:  " + payload.datetimePretty,
-      "Where: " + (payload.location || "(no location — surprise me!)"),
-      "",
-      "Can't wait! 💕"
+      "Where: " + (payload.location || "(no location — surprise me!)")
     ];
+    if (payload.note) {
+      lines.push("Note:  " + payload.note);
+    }
+    lines.push("", "Can't wait! 💕");
     return lines.join("\n");
   }
 

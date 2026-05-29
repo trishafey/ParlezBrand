@@ -34,6 +34,7 @@ body {
 .stage {
   position: relative;
   min-height: 100vh;
+  min-height: 100dvh; /* avoids mobile browser-chrome gaps */
   display: grid;
   place-items: center;
   padding: 24px;
@@ -44,17 +45,19 @@ body {
   position: absolute;
   inset: 0;
   display: none;
-  place-items: center;
+  overflow-y: auto; /* let tall content (the form) scroll on small phones */
+  -webkit-overflow-scrolling: touch;
   padding: 24px;
 }
 .screen.is-active {
-  display: grid;
+  display: flex; /* with margin:auto on .card this centers AND stays scrollable */
   animation: pop-in 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28) both;
 }
 
 .card {
   position: relative;
-  width: min(520px, 92vw);
+  width: min(520px, 100%);
+  margin: auto;
   background: var(--cream);
   border-radius: 28px;
   padding: 44px 36px;
@@ -153,9 +156,11 @@ form { text-align: left; }
 .optional { font-weight: 400; color: #9a7d8a; font-size: 0.9em; }
 
 input[type="datetime-local"],
-input[type="text"] {
+input[type="text"],
+textarea {
   width: 100%;
   font: inherit;
+  font-size: 16px; /* keeps iOS Safari from zooming in on focus */
   padding: 13px 16px;
   border: 2px solid #f0c6d4;
   border-radius: 14px;
@@ -163,7 +168,13 @@ input[type="text"] {
   color: var(--ink);
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
-input:focus {
+textarea {
+  resize: vertical;
+  min-height: 84px;
+  line-height: 1.4;
+}
+input:focus,
+textarea:focus {
   outline: none;
   border-color: var(--pink);
   box-shadow: 0 0 0 4px rgba(255, 93, 143, 0.18);
@@ -222,8 +233,25 @@ input.invalid { border-color: #e23e6e; }
   to { transform: translateY(-360px) rotate(40deg); opacity: 0; }
 }
 
+/* ---------- small screens ---------- */
+@media (max-width: 480px) {
+  .stage, .screen { padding: 14px; }
+  .card { padding: 30px 20px; border-radius: 22px; }
+  .btn { padding: 13px 26px; }
+  .buttons { gap: 12px; }
+  .field { margin-bottom: 18px; }
+  .big-heart { font-size: 4rem; }
+}
+
+/* On very short screens (e.g. phones in landscape) start from the top
+   so the submit button is always reachable by scrolling. */
+@media (max-height: 560px) {
+  .card { margin: 0 auto; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .screen.is-active { animation: none; }
   .big-heart { animation: none; }
   .floating-hearts span { display: none; }
+  .btn { transition: none; }
 }
